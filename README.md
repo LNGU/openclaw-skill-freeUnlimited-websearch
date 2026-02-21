@@ -9,7 +9,7 @@ Free unlimited web search using DuckDuckGo. No API key required.
 pip install ddgs
 
 # Clone to openclaw skills
-git clone https://github.com/YOUR_USERNAME/openclaw-skill-freeUnlimited-websearch ~/.openclaw/skills/freeUnlimited-websearch
+git clone https://github.com/LNGU/openclaw-skill-freeUnlimited-websearch ~/.openclaw/skills/freeUnlimited-websearch
 
 # Update shebang in search.py to your python path
 # Then enable in ~/.openclaw/openclaw.json and restart openclaw
