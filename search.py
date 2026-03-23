@@ -1,13 +1,36 @@
 #!/usr/bin/env python3
-# search.py - DuckDuckGo web search for OpenClaw
-# Update the shebang above to point to a Python environment with 'ddgs' installed
+# search.py - Web search for OpenClaw (Tavily or DuckDuckGo)
+# Update the shebang above to point to a Python environment with 'ddgs' (and optionally 'tavily-python') installed
 import sys
 import json
-from ddgs import DDGS
+import os
+
+TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
+
+def _search_tavily(query):
+    from tavily import TavilyClient
+    client = TavilyClient(api_key=TAVILY_API_KEY)
+    response = client.search(query=query, max_results=5)
+    # Normalize to match DuckDuckGo schema: title, href, body
+    results = []
+    for r in response.get("results", []):
+        results.append({
+            "title": r.get("title", ""),
+            "href": r.get("url", ""),
+            "body": r.get("content", ""),
+        })
+    return results
+
+def _search_ddgs(query):
+    from ddgs import DDGS
+    return list(DDGS().text(query, max_results=5))
 
 def run_search(query):
     try:
-        results = list(DDGS().text(query, max_results=5))
+        if TAVILY_API_KEY:
+            results = _search_tavily(query)
+        else:
+            results = _search_ddgs(query)
         return json.dumps(results)
     except Exception as e:
         return json.dumps({"error": str(e)})
